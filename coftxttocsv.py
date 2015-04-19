@@ -6,9 +6,10 @@ import re
 import sys
 
 HEADERS = ['Group', 'Age', 'Weekly Thrifty Plan', 'Weekly Low-Cost Plan', 'Weekly Moderate-Cost Plan', 'Weekly Liberal Plan', 'Monthly Thrifty Plan', 'Monthly Low-Cost Plan', 'Monthly Moderate-Cost Plan', 'Monthly Liberal Plan']
-CHILD_SECTION_REGEX = re.compile('((Child)|(CHILD)):\n(?P<content>.+)?(?=\n\n((Ma)|(MA)))', flags=re.DOTALL)
-MALE_SECTION_REGEX = re.compile('((Male)|(MALE))( \(M\))?:\n(?P<content>.+)?(?=\n\n((Fe)|(FE)))', flags=re.DOTALL)
+CHILD_SECTION_REGEX = re.compile('((Child)|(CHILD)):\n(?P<content>.+)?(?=\n\n((Male)|(MALE)))', flags=re.DOTALL)
+MALE_SECTION_REGEX = re.compile('((Male)|(MALE))( \(M\))?:\n(?P<content>.+)?(?=\n\n((Female)|(FE( )?MALE)))', flags=re.DOTALL)
 FEMALE_SECTION_REGEX = re.compile('((Female)|(FE( )?MALE))( \(F\))?:\n(?P<content>.+)?(?=\n\n((Families)|(FAMILIES)))', flags=re.DOTALL)
+WINTER_03_PDF_ERROR = re.compile(r'Thrifty.+plan', flags=re.DOTALL)
 
 def get_csv_rows(group, section):
 	'''Transform a male section into csv male rows'''
@@ -47,7 +48,14 @@ def main():
 	# Retrieve the child, male, and female rows
 	child_section_match = CHILD_SECTION_REGEX.search(contents)
 	if child_section_match:
-		child_rows = get_csv_rows('Child', child_section_match.group('content'))
+		child_section_content = child_section_match.group('content')
+
+		# Check for Winter 03 PDF ERROR
+		pdf_error_match = WINTER_03_PDF_ERROR.search(child_section_content)
+		if pdf_error_match:
+			child_section_content = re.sub(WINTER_03_PDF_ERROR, '', child_section_content)
+
+		child_rows = get_csv_rows('Child', child_section_content)
 	else:
 		print('Could not retrieve Child section from {}'.format(args.file), file=sys.stderr)
 		sys.exit(1)

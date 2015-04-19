@@ -1,6 +1,5 @@
 Group,Age,Weekly Thrifty Plan,Weekly Low-Cost Plan,Weekly Moderate-Cost Plan,Weekly Liberal Plan,Monthly Thrifty Plan,Monthly Low-Cost Plan,Monthly Moderate-Cost Plan,Monthly Liberal Plan
-Child,1 year,Thrifty,WEEKLY COST,Liberal,Thrifty,MONTHLY COST,17.30,21.60,25.30,30.90,75.00,93.60,109.60,133.90
-Child,2 years,plan,Low-cost Moderateplan,plan,plan,Low-cost Moderate- Liberal,17.20,21.20,25.30,30.60,74.50,91.90,109.60,132.60
+Child,1 year,,17.30,21.60,25.30,30.90,75.00,93.60,109.60,133.90
 Male,12-14 years,28.70,39.80,49.20,58.10,124.40,172.50,213.20,251.70
 Male,15-19 years,29.60,41.00,51.20,59.60,128.30,177.70,221.80,258.20
 Male,20-50 years,31.60,41.00,51.20,62.50,136.90,177.70,221.80,270.80
