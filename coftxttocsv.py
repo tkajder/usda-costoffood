@@ -6,9 +6,9 @@ import re
 import sys
 
 HEADERS = ['Group', 'Age', 'Weekly Thrifty Plan', 'Weekly Low-Cost Plan', 'Weekly Moderate-Cost Plan', 'Weekly Liberal Plan', 'Monthly Thrifty Plan', 'Monthly Low-Cost Plan', 'Monthly Moderate-Cost Plan', 'Monthly Liberal Plan']
-CHILD_SECTION_REGEX = re.compile('((Child)|(CHILD)):\n(?P<content>.+)(?=\n\nM)', flags=re.DOTALL)
-MALE_SECTION_REGEX = re.compile('((Male)|(MALE))( \(M\))?:\n(?P<content>.+)(?=\n\nF)', flags=re.DOTALL)
-FEMALE_SECTION_REGEX = re.compile('((Female)|(FE( )?MALE))( \(F\))?:\n(?P<content>.+)(?=\n\nF)', flags=re.DOTALL)
+CHILD_SECTION_REGEX = re.compile('((Child)|(CHILD)):\n(?P<content>.+)?(?=\n\n((Ma)|(MA)))', flags=re.DOTALL)
+MALE_SECTION_REGEX = re.compile('((Male)|(MALE))( \(M\))?:\n(?P<content>.+)?(?=\n\n((Fe)|(FE)))', flags=re.DOTALL)
+FEMALE_SECTION_REGEX = re.compile('((Female)|(FE( )?MALE))( \(F\))?:\n(?P<content>.+)?(?=\n\n((Families)|(FAMILIES)))', flags=re.DOTALL)
 
 def get_csv_rows(group, section):
 	'''Transform a male section into csv male rows'''
