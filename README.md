@@ -35,4 +35,10 @@ The generated `.txt` files from `pdftotext` are poorly organized due to the form
 ```bash
 $ ./generate_csvs.sh
 ```
-Note that the `.csv` files can have different age cutoffs due to changes in reporting. The most notable of these changes occurs between the reports February 2007 and March 2007.
+Note that the `.csv` files can have different age cutoffs due to changes in reporting. The most notable of these changes occurs between the reports February 2007 and Sep 2007.
+
+Errors
+------
+
+Due to incorrect pdf generation of the USDA Cost of Food reports from the period March 2007 to August 2007 the files from this period are unusable as data.
+
