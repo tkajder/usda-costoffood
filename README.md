@@ -7,7 +7,7 @@ Setup Requirements
 All scripts run in Python 2.7 and Python 3. 
 The required python packages specified in the requirements.txt file should be downloaded into system packages or a virtualenv.
 
-This project relies on the `pdftotext` executable from [xpdf](http://www.foolabs.com/xpdf/download.html).
+This project relies on the `pdftotext`version 0.26.5  executable from [xpdf](http://www.foolabs.com/xpdf/download.html).
 
 Downloading USDA Cost of Food Reports
 -------------------------------------
