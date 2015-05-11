@@ -1,68 +1,114 @@
-#!/usr/bin/env python3
+#!venv/bin/python
 
 from bs4 import BeautifulSoup
 from itertools import count
-from multiprocessing import Pool
+import logging
 import os
 import re
 import requests
+from requests_throttler import BaseThrottler
 
-FOOD_PLAN_INDEX = 'http://www.cnpp.usda.gov/USDAFoodPlansCostofFood/reports?field_publication_type_tid=953&field_publication_date_value[value]&page={page_no}'
-COF_REPORT_REGEX = re.compile(r'CostofFood\w\w\w\d\d')
-FILE_NAME_REGEX = re.compile(r'/(\w+\d+\.pdf)\b')
+FOOD_PLAN_INDEX = '''http://www.cnpp.usda.gov/USDAFoodPlansCostofFood/reports?field_publication_type_tid=953&field_publication_date_value[value]&page={page_no}'''
+ORIGIN_BASE_ADDRESS = '''http://origin.www.cnpp.usda.gov/'''
+ORIGIN_TABLE_ADDRESS  = '''http://origin.www.cnpp.usda.gov/USDAFoodCost-Home.htm'''
+
+COF_REPORT_NAME_REGEX = re.compile(r'/(CostofFood\w\w\w(\d){2,4}\.pdf)\b')
+
 SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 PDF_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'cofpdfs')
 
-def get_cof_report_links(content):
-    '''Retrieves the Cost of Food reports from a page of the USDA tables'''
-    soup = BeautifulSoup(content)
-    attachments = soup.find_all("span", class_="file")
+THROTTLER = BaseThrottler(name='cof-report-throttler', delay=10.0)
 
-    # Using a set comprehension due to duplicated months in the tables
-    links = {attachment.a['href'] for attachment in attachments}
+class Report:
+    '''A container for report name and link that overrides __hash__ and
+    __eq__ for sets to remove reports of the same name'''
+    def __init__(self, name, link):
+        self.name = name
+        self.link = link
 
-    cof_report_links = filter(is_cof_report, links)
+    def __hash__(self):
+        return hash(self.name)
 
-    return list(cof_report_links)
+    def __eq__(self, other):
+        return self.name == other.name
 
-def is_cof_report(link):
-    '''Checks if a given link points to a Cost of Food report'''
-    match = COF_REPORT_REGEX.search(link)
+    def __repr__(self):
+        return 'Name: {}\tLink: {}'.format(self.name, self.link)
 
-    if match:
-        return True
-    else:
-        return False
+def get_index_reports():
+    '''Retrieves the Cost of Food reports from the index pages at cnpp.usda.gov.
+    Note that this set is incomplete due to poor html creation so we redundantly
+    scrape origin to get all reports.'''
+    # We use a set because the created html contains duplicate reports
+    links = set()
 
-def get_cof_report(link):
-    '''Gets the Cost of Food report and saves it to PDF_DIRECTORY'''
-    response = requests.get(link)
-    pdf = response.content
-
-    file_name = FILE_NAME_REGEX.search(link).group(1)
-
-    with open(os.path.join(PDF_DIRECTORY, file_name), 'wb') as file:
-        file.write(pdf)
-
-def main():
-    '''Retrieves the Cost of Food Report pdfs from the USDA website'''
-    processing_pool = Pool()
-
-    # There are a growing number of pages as time goes on
-    # We iterate until there are no more Cost of Food reports on the page
+    # Indeterminate number of pages, count upwards until no reports found
     for page_no in count(start=0, step=1):
-        response = requests.get(FOOD_PLAN_INDEX.format(page_no=page_no))
+        response = throttle_request(FOOD_PLAN_INDEX.format(page_no=page_no))
+        soup = BeautifulSoup(response.content)
 
-        cof_report_links = get_cof_report_links(response.content)
-
-        # Check if there were links on the given page
-        if cof_report_links:
-            processing_pool.map_async(get_cof_report, cof_report_links)
+        # Grab all attachments in the index: links to reports and other documents
+        attachments = soup.find_all("span", class_="file")
+        if attachments:
+            links.update({attachment.a['href'] for attachment in attachments})
         else:
             break
 
-    processing_pool.close()
-    processing_pool.join()
+    # Yield reports from links
+    for link in links:
+        match = COF_REPORT_NAME_REGEX.search(link)
+        if match:
+            yield Report(match.group(1), link)
+        else:
+            logging.warning('Could not process link %s into report name', link)
+
+def get_origin_reports():
+    '''Retrieve all COF reports from the origin link. Note this index is
+    complete, but lags behind the current date by over a year.'''
+    response = throttle_request(ORIGIN_TABLE_ADDRESS)
+    soup = BeautifulSoup(response.content)
+    # All a_hrefs contained in the table point to reports
+    a_hrefs = soup.find(id='table39').find_all('a')
+
+    # Yield reports from links
+    for a_href in a_hrefs:
+        link = ORIGIN_BASE_ADDRESS + a_href.get('href')
+        match = COF_REPORT_NAME_REGEX.search(link)
+        if match:
+            yield Report(match.group(1), link)
+        else:
+            logging.warning('Could not process link %s into report name', link)
+
+def download_report(report):
+    '''Gets the COF report and save it to PDF_DIRECTORY'''
+    response = throttle_request(report.link)
+    pdf_content = response.content
+
+    with open(os.path.join(PDF_DIRECTORY, report.name), 'wb') as file:
+        file.write(pdf_content)
+
+def throttle_request(url):
+    '''Retrieves the response from a url, throttling the request to follow robots.txt'''
+    request = requests.Request(method='GET', url=url)
+    throttled_request = THROTTLER.submit(request)
+    response = throttled_request.response
+    return response
+
+def main():
+    # Start the throttler's threads
+    THROTTLER.start()
+
+    # Retrieve all Cost of Food report links and create a set
+    index_reports = get_index_reports()
+    origin_reports = get_origin_reports()
+    reports = set(index_reports) | set(origin_reports)
+
+    # Download all Cost of Food reports
+    for report in reports:
+        download_report(report)
+
+    # Shutdown the throttler's threads
+    THROTTLER.shutdown()
 
 if __name__ == '__main__':
     main()
