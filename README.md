@@ -4,20 +4,24 @@ usda-costoffood is a collection of scripts to retrieve and analyze monthly [USDA
 
 Setup Requirements
 ------------------
-All scripts run in Python 2.7 and Python 3. 
-The required python packages specified in the requirements.txt file should be downloaded into system packages or a virtualenv.
+All scripts are tested in Python 2.7 and Python 3.4.
+The required python packages specified in the requirements.txt file should be downloaded into a virtualenv in the project directory like so:
 
-This project relies on the `pdftotext`version 0.26.5  executable from [xpdf](http://www.foolabs.com/xpdf/download.html).
+```bash
+$ virtualenv venv
+```
+
+This project relies on the `pdftotext`version 0.26.5 executable from [xpdf](http://www.foolabs.com/xpdf/download.html).
 
 Downloading USDA Cost of Food Reports
 -------------------------------------
 USDA Cost of Food Reports are published monthly in `.pdf` format. To download all available reports run:
 
 ```bash
-$ python downloadcofpdfs.py
+$ ./downloadcofpdfs.py
 ```
 
-Although `downloadcofpdfs.py` runs with multi-processing there are more than 240 published reports and the script will take several minutes.
+`downloadcofpdfs.py` will take some time as there are more than 240 published reports and this script respects crawl-delay of 10 seconds in the robots.txt.
 
 Creating `.txt` Files from `.pdf`
 ---------------------------------
@@ -39,6 +43,4 @@ Note that the `.csv` files can have different age cutoffs due to changes in repo
 
 Errors
 ------
-
 Due to incorrect pdf generation of the USDA Cost of Food reports from the period March 2007 to August 2007 the files from this period are unusable as data.
-
