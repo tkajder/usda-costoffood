@@ -1,0 +1,7 @@
+Group,Age,Weekly Thrifty Plan,Weekly Low-Cost Plan,Weekly Moderate-Cost Plan,Weekly Liberal Plan,Monthly Thrifty Plan,Monthly Low-Cost Plan,Monthly Moderate-Cost Plan,Monthly Liberal Plan
+Child,1 year,19.00,82.10,Male:,32.30,139.90,Female:,32.20,74.90,109.00,139.50,324.40,Age-gender,Weekly cost2,Individuals3,24.40,28.10,34.00,105.80,121.90,147.50
+Child,2-3 years,20.00,86.70,12-13 years,33.50,145.00,12-13 years,32.00,70.90,125.10,138.70,307.40,groups,Monthly cost2,Child:,23.90,28.40,34.30,103.60,123.00,148.80
+Male,12-13 years,32.30,139.90,Female:,32.20,74.90,109.00,139.50,324.40,Age-gender,Weekly cost2,Individuals3,24.40,28.10,34.00,105.80,121.90,147.50,Male:,45.10,55.70,66.10,195.60,241.50,286.30
+Male,14-18 years,33.50,145.00,12-13 years,32.00,70.90,125.10,138.70,307.40,groups,Monthly cost2,Child:,23.90,28.40,34.30,103.60,123.00,148.80,12-14 years,46.70,57.80,67.40,202.30,250.50,292.10
+Female,12-13 years,32.20,74.90,109.00,139.50,324.40,Age-gender,Weekly cost2,Individuals3,24.40,28.10,34.00,105.80,121.90,147.50,Male:,45.10,55.70,66.10,195.60,241.50,286.30,Female:,39.10,47.10,57.30,169.20,204.20,248.10
+Female,14-18 years,32.00,70.90,125.10,138.70,307.40,groups,Monthly cost2,Child:,23.90,28.40,34.30,103.60,123.00,148.80,12-14 years,46.70,57.80,67.40,202.30,250.50,292.10,12-19 years,40.20,49.10,63.30,174.10,212.70,274.10
