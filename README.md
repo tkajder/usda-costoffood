@@ -18,26 +18,26 @@ Downloading USDA Cost of Food Reports
 USDA Cost of Food Reports are published monthly in `.pdf` format. To download all available reports run:
 
 ```bash
-$ ./downloadcofpdfs.py
+$ ./downloadpdfs.py
 ```
 
-`downloadcofpdfs.py` will take some time as there are more than 240 published reports and this script respects crawl-delay of 10 seconds in the robots.txt.
+`downloadpdfs.py` will take some time as there are more than 240 published reports and this script respects crawl-delay of 10 seconds in the robots.txt.
 
 Creating `.txt` Files from `.pdf`
 ---------------------------------
 Generating `.txt` files relies on `pdftotext`. To generate all `.txt` files from the downloaded reports run:
 
 ```bash
-$ ./generate_txts.sh
+$ ./generatetxts.sh
 ```
 Currently `pdftotext` generates empty files for report earlier than May 1997 making this data inaccessible.
 
 Creating `.csv` Files from `.txt`
 ---------------------------------
-The generated `.txt` files from `pdftotext` are poorly organized due to the formatting of USDA Cost of Food reports. The generation of `.csv` files is handled by the script `coftxttocsv.py` which is called for each `.txt` file by `generate_csvs.sh`. To generate usable `.csv` files run:
+The generated `.txt` files from `pdftotext` are poorly organized due to the formatting of USDA Cost of Food reports. The generation of `.csv` files is handled by the script `txttocsv.py` which is called for each `.txt` file by `generatecsvs.sh`. To generate usable `.csv` files run:
 
 ```bash
-$ ./generate_csvs.sh
+$ ./generatecsvs.sh
 ```
 Note that the `.csv` files can have different age cutoffs due to changes in reporting. The most notable of these changes occurs between the reports February 2007 and Sep 2007.
 

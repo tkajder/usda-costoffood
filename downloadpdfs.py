@@ -15,7 +15,7 @@ ORIGIN_TABLE_ADDRESS  = '''http://origin.www.cnpp.usda.gov/USDAFoodCost-Home.htm
 COF_REPORT_NAME_REGEX = re.compile(r'/(CostofFood\w\w\w(\d){2,4}\.pdf)\b')
 
 SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
-PDF_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'cofpdfs')
+PDF_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'pdfs')
 
 THROTTLER = BaseThrottler(name='cof-report-throttler', delay=10.0)
 

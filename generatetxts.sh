@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-for file in cofpdfs/*.pdf
+for file in pdfs/*.pdf
 	do pdftotext "$file"
 done
 
-mv cofpdfs/*.txt txts/
+mv pdfs/*.txt txts/
